@@ -21,9 +21,7 @@ def download_input(day: int) -> Path:
     output_filename = FILE_DIR.parent / 'inputs' / format_input_filename(day)
     url = f'{AOC_BASE_URL}/{YEAR}/day/{day}/input'
 
-    with requests.get(
-        url=url, cookies={"session": USER_SESSION_ID}, headers={"User-Agent": USER_AGENT}
-    ) as response:
+    with requests.get(url=url, cookies={"session": USER_SESSION_ID}, headers={"User-Agent": USER_AGENT}) as response:
         if response.ok:
             data = response.text
         else:

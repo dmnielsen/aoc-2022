@@ -13,9 +13,7 @@ def _format_alt_text(alt_text: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     return alt_text
 
 
-def print_solutions(
-    part1: Any = '', part2: Any = '', alt_text: Union[str, Tuple[str, str]] = ''
-) -> None:
+def print_solutions(part1: Any = '', part2: Any = '', alt_text: Union[str, Tuple[str, str]] = '') -> None:
     alt_text = _format_alt_text(alt_text)
     output_str = f"""
 ********************************
