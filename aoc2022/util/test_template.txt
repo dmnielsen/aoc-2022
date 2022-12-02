@@ -1,0 +1,20 @@
+import pytest
+
+from aoc2022 import ${module_name} as day
+
+
+@pytest.fixture
+def mock_input():
+    return
+
+
+def test_solve_part1(mock_input):
+    expected = None
+    result = day.solve_part1(mock_input)
+    assert expected == result
+
+
+def test_solve_part2(mock_input):
+    expected = None
+    result = day.solve_part2(mock_input)
+    assert expected == result
