@@ -35,7 +35,7 @@ def download_input(day: int) -> Path:
     return output_filename
 
 
-def create_day_template(day: str):
+def create_day_template(day: int) -> None:
     day_filename = format_day_filename(day)
     if not validate_filename(day_filename):
         day_template = load_day_template()
@@ -65,7 +65,7 @@ def load_test_template() -> Template:
         return Template(f.read())
 
 
-def format_day_filename(day: str) -> Path:
+def format_day_filename(day: int) -> Path:
     return FILE_DIR / f'day_{day:02}.py'
 
 

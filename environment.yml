@@ -2,10 +2,11 @@ name: aoc-2022
 channels:
   - defaults
 dependencies:
-  - python=3.9
+  - python=3.11
   - pytest
   - typing
   - jupyterlab
   - black
   - nb_conda
+  - mypy
 prefix: /Users/admin/miniconda3/envs/aoc-2022
