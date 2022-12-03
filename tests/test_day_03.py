@@ -22,6 +22,7 @@ def test_find_badge_item():
     result = day.find_badge_item(elf1, elf2, elf3)
     assert expected == result
 
+
 def test_solve_part1(mock_input):
     expected = 157
     result = day.solve_part1(mock_input)
