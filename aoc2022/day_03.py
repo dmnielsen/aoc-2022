@@ -1,7 +1,7 @@
-from pathlib import Path
 import string
-from typing import List, Iterable, Dict
 from itertools import islice
+from pathlib import Path
+from typing import Dict, Iterable, List
 
 from aoc2022 import AOC_DIR
 from aoc2022.util import print_solutions

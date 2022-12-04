@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from typing import List
 
 from aoc2022 import AOC_DIR

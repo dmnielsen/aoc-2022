@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from typing import Tuple
-
 from aoc2022 import AOC_DIR
 from aoc2022.util import print_solutions
 
 INPUT_FILENAME = AOC_DIR / 'inputs' / '202204_input.txt'
 
 
-Section = Tuple[int, int]
+Section = tuple[int, int]
 
 
 def load(filename: Path = INPUT_FILENAME) -> str:
