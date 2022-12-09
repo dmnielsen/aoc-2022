@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable
+from typing import Generator, Iterable
 
 import numpy as np
 
@@ -14,7 +14,7 @@ def load(filename: Path = INPUT_FILENAME) -> str:
         return f.read()
 
 
-def parse_grid(text: str) -> np.array:
+def parse_grid(text: str) -> np.ndarray:
     return np.array([[int(char) for char in line] for line in text.strip().split('\n')])
 
 
@@ -45,7 +45,7 @@ def count_visible_trees(tree_grid: np.ndarray) -> int:
     return visible_trees
 
 
-def yield_shorter_trees_in_los(iterable: Iterable, tree_height: int):
+def yield_shorter_trees_in_los(iterable: Iterable, tree_height: int) -> Generator:
     it = iter(iterable)
     for x in it:
         if x >= tree_height:

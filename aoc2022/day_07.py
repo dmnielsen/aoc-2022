@@ -10,7 +10,7 @@ INPUT_FILENAME = AOC_DIR / 'inputs' / '202207_input.txt'
 class Directory:
     def __init__(self, name: tuple):
         self.name = name
-        self.children = []
+        self.children: list = []
 
     def get_size(self) -> int:
         size = 0
@@ -26,15 +26,15 @@ class Directory:
 
 
 class File:
-    def __init__(self, name: str, size: Union[int, str]):
+    def __init__(self, name: tuple, size: Union[int, str]):
         self.name = name
-        self.size = None
-        self.format_size(size)
+        self.size: int
+        self._format_size(size)
 
-    def format_size(self, size):
+    def _format_size(self, size):
         self.size = int(size)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"File(name='{self.name}', size={self.size})"
 
 
@@ -45,9 +45,9 @@ def load(filename: Path = INPUT_FILENAME) -> str:
 
 def walk_directory(cmds: list[str]) -> dict:
     root = Directory(name=('/',))
-    directory_dict: dict[tuple, File] = {('/',): root}
-    current_dir = tuple()
-    current_dir_obj = None
+    directory_dict: dict[tuple, Directory] = {('/',): root}
+    current_dir: tuple = tuple()
+    # current_dir_obj = None
     # breakpoint()
     for i, cmd in enumerate(cmds):
         if cmd == '$ ls':

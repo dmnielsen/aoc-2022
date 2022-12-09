@@ -1,7 +1,7 @@
 import collections
 from itertools import islice
 from pathlib import Path
-from typing import Iterable
+from typing import Generator, Iterable
 
 from aoc2022 import AOC_DIR
 from aoc2022.util import print_solutions
@@ -14,7 +14,7 @@ def load(filename: Path = INPUT_FILENAME) -> str:
         return f.read()
 
 
-def sliding_window(iterable: Iterable, n: int) -> tuple[str]:
+def sliding_window(iterable: Iterable, n: int) -> Generator:
     # sliding_window('ABCDEFG', 4) --> ABCD BCDE CDEF DEFG
     it = iter(iterable)
     window = collections.deque(islice(it, n), maxlen=n)
