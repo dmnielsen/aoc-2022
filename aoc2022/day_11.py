@@ -1,6 +1,6 @@
-from math import floor
+from collections import deque
+from math import floor, lcm
 from pathlib import Path
-from  collections import deque
 
 from aoc2022 import AOC_DIR
 from aoc2022.util import print_solutions
@@ -9,8 +9,7 @@ INPUT_FILENAME = AOC_DIR / 'inputs' / '202211_input.txt'
 
 
 class Monkey:
-    def __init__(self, number: int, items: tuple[int], operation: tuple[str],
-                 test: int, test_true: int, test_false: int):
+    def __init__(self, number: int, items: list[int], operation: list[str], test: int, test_true: int, test_false: int):
         self.number = number
         self.operation = operation
         self.operation_func = self.pick_operation()
@@ -28,8 +27,9 @@ class Monkey:
     def __str__(self) -> str:
         return f'Monkey {self.number}: {self.print_items()}'
 
-    def _initialize_items(self, items: tuple[int]):
-        item_list = deque([])
+    @staticmethod
+    def _initialize_items(items: list[int]):
+        item_list: deque[int] = deque([])
         for item in items:
             item_list.append(item)
         return item_list
@@ -42,23 +42,20 @@ class Monkey:
             return True
         return False
 
-    def inspect_item(self, relief: bool = True) -> tuple[int, int]:
+    def inspect_item(self, relief: bool = True, mod: int = 0) -> tuple[int, int]:
+        """Inspect item; returns item and monkey number to pass to"""
 
         self.items_inspected += 1
 
         item = self.holding_items.popleft()
 
-        if self.operation == ('*', 'old'):
-            item = item * item
-        elif self.operation[0] == '+':
-            item = item + int(self.operation[1])
-        elif self.operation[0] == '*':
-            item = item * int(self.operation[1])
-        else:
-            raise ValueError(f'operation {self.operation} has unexpected value')
+        item = self.operation_func(item)
 
         if relief:
             item = floor(item / 3)
+
+        if mod:
+            item = item % mod
 
         if (item % self.divisible_by) == 0:
             return self.pass_if_true, item
@@ -67,9 +64,6 @@ class Monkey:
 
     def catch_item(self, item):
         self.holding_items.append(item)
-
-    def catch_items(self, items: list[int]):
-        self.holding_items.extend(items)
 
     def square_worry(self, worry: int):
         return worry * worry
@@ -81,7 +75,7 @@ class Monkey:
         return worry * int(self.operation[1])
 
     def pick_operation(self):
-        if self.operation == ('*', 'old'):
+        if self.operation[-1] == 'old':
             return self.square_worry
         elif self.operation[0] == '+':
             return self.add_worry
@@ -90,65 +84,36 @@ class Monkey:
         else:
             raise ValueError(f'{self.operation} did not match')
 
-    def batch_inspect(self):
-        self.items_inspected = len(self.holding_items)
-
-        self.holding_items = [self.operation_func(x) for x in self.holding_items]
-
-
-class Item:
-    def __init__(self, worry):
-        self.ops = [worry]
-
-    def add_worry(self, num):
-        self.ops = [stored + num for stored in self.ops]
-
-    def multiply_worry(self, num):
-        self.ops.append(num)
-
-    def square_worry(self):
-        self.ops = 2 * self.ops
-
-    def is_divisible(self, num):
-        return any((worry % num) == 0 for worry in self.ops)
-
-    def __str__(self):
-        return f"[{', '.join(str(x) for x in self.ops)}]"
-
-    def __repr__(self):
-        return f"Item({self.__str__()})"
-
 
 def load(filename: Path = INPUT_FILENAME) -> str:
     with open(filename, 'r') as f:
         return f.read()
 
 
-def parse_items(text: str):
+def parse_items(text: str) -> list[str]:
     idx = text.find(':')
-    return text[idx + 2:].split(', ')
+    return text[idx + 2 :].split(', ')
 
 
-def parse_monkey_text(text: str):
-    # breakpoint()
-    text = text.strip().split('\n')
-    number = int(text[0][-2])
-    starting_items = tuple(int(x) for x in parse_items(text[1]))
-    operation = tuple(text[2].strip().split(' ')[-2:])
-    test = int(text[3].strip().split(' ')[-1])
-    test_true = int(text[4].strip().split(' ')[-1])
-    test_false = int(text[5].strip().split(' ')[-1])
+def parse_monkey_text(text: str) -> tuple[int, list[int], list[str], int, int, int]:
+    lines: list[str] = text.strip().split('\n')
+    number = int(lines[0][-2])
+    starting_items = [int(x) for x in parse_items(lines[1])]
+    operation = lines[2].strip().split(' ')[-2:]
+    test = int(lines[3].strip().split(' ')[-1])
+    test_true = int(lines[4].strip().split(' ')[-1])
+    test_false = int(lines[5].strip().split(' ')[-1])
     return number, starting_items, operation, test, test_true, test_false
 
 
-def parse_input(text: str):
-    text = text.split('\n\n')
+def parse_input(text: str) -> dict[int, Monkey]:
+    lines = text.split('\n\n')
 
     monkeys = {}
 
-    for monkey in text:
-        monkey = parse_monkey_text(monkey)
-        monkeys[monkey[0]] = Monkey(*monkey)
+    for line in lines:
+        monkey = Monkey(*parse_monkey_text(line))
+        monkeys[monkey.number] = monkey
 
     return monkeys
 
@@ -167,17 +132,14 @@ def solve_part1(input_: str) -> int:
     return items_inspected[0] * items_inspected[1]
 
 
-def solve_part2(input_: str):
+def solve_part2(input_: str) -> int:
     monkeys = parse_input(input_)
+    lcm_mod = lcm(*[m.divisible_by for m in monkeys.values()])
 
     for i in range(10000):
-        if (i % 20) == 0:
-            for m in monkeys.values():
-                print(m, end=' ')
-            print(i)
         for _, monkey in monkeys.items():
             while monkey.has_items():
-                pass_to, item = monkey.inspect_item(relief=False)
+                pass_to, item = monkey.inspect_item(relief=False, mod=lcm_mod)
                 monkeys[pass_to].catch_item(item)
 
     items_inspected = sorted([monkey.items_inspected for monkey in monkeys.values()], reverse=True)
@@ -189,8 +151,7 @@ def main(show_solution: bool = True):
     input_ = load(INPUT_FILENAME)
 
     result1 = solve_part1(input_)
-    # result2 = solve_part2(input_)
-    result2 = None
+    result2 = solve_part2(input_)
 
     if show_solution:
         print_solutions(result1, result2)
