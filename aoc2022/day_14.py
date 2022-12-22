@@ -1,7 +1,8 @@
-from pathlib import Path
 import re
-from math import fabs
 from collections import namedtuple
+from math import fabs
+from pathlib import Path
+
 from aoc2022 import AOC_DIR
 from aoc2022.util import print_solutions
 
